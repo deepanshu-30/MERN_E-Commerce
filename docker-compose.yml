@@ -1,0 +1,63 @@
+version: '3.7'
+#docker logs -f a751adc894fd
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: server-react-app
+    container_name: ecomm-node-server
+    command: /server/app/node_modules/.bin/nodemon index.js
+    #The .bin directory in a Node.js project contains executable binaries of npm packages installed 
+    #locally within the node_modules directory. These binaries are typically command-line tools or 
+    #scripts provided by npm packages that you can run directly from the terminal.
+    #When you install a package using npm, npm may include executable files as part of the package. 
+    #These files are placed in the .bin directory within the node_modules directory of your project. 
+    #The purpose of this directory is to provide a convenient way to run these executable files without 
+    #having to reference their full paths.
+    #For example, if you install a package called nodemon, which is a tool for automatically 
+    #restarting Node.js applications when file changes are detected, 
+    #npm will place the nodemon executable file in the .bin directory. You can then run nodemon directly from the terminal without specifying its full path, like this:#
+    volumes:
+      - ./server/:/server/app 
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - MongoDb_URI=mongodb+srv://deep3051998:AQBXFfWT992IXOXb@cluster0.pjqcdvm.mongodb.net
+      - PORT=5000
+      - CORS_ORIGIN=*
+      - ACCESS_TOKEN_SECRET=ME1322632*7465763
+      - ACCESS_TOKEN_EXPIRY=1d
+      - REFRESH_TOKEN_SECRET=*7465763+=ME1322632
+      - REFRESH_TOKEN_EXPIRY=10d
+      - CLOUDINARY_API_KEY=186978692555592
+      - CLOUDINARY_API_SECRET=CRPfnGJ5xZ2BoKFSrfKyE9c7DzY
+      - CLOUDINARY_CLOUD_NAME=dj0ycafyz
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: client-react-app
+    container_name: ecomm-react-client
+    command: npm start
+    volumes:
+      - ./client/:/app 
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data-volume:
+  node_modules:
+
